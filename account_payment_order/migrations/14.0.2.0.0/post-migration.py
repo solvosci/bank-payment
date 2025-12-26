@@ -21,6 +21,8 @@ def _insert_account_payments(env):
             payment_method_id, old_bank_payment_line_id, payment_type,
             partner_type,
             destination_account_id, payment_reference, move_id
+            /* Restriction due to account_check_date */
+            , check_date
         )
         SELECT
             bpl.create_date, bpl.create_uid, bpl.write_date, bpl.write_uid, bpl.name,
@@ -28,6 +30,8 @@ def _insert_account_payments(env):
             apm.payment_method_id, bpl.id, apo.payment_type,
             CASE WHEN apo.payment_type = 'inbound' THEN 'customer' ELSE 'supplier' END,
             aml.account_id, bpl.communication, aml.move_id
+            /* Restriction due to account_check_date */
+            , aml.date
         FROM bank_payment_line bpl
         JOIN account_payment_order apo ON apo.id = bpl.order_id
         JOIN account_payment_mode apm ON apm.id = apo.payment_mode_id
